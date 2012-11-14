@@ -99,7 +99,7 @@ function Invoke-TeamcityGetCommand()
         $credentials = Get-TeamcityCredentials
 		$client = New-Object Net.WebClient
 		$client.Credentials = $credentials
-		return ,$client.DownloadString($url)
+		$client.DownloadString($url)
     }
 }
 
@@ -118,7 +118,7 @@ function Invoke-TeamcityPostCommand()
 		$client = New-Object Net.WebClient
 		$client.Credentials = $credentials
 		$client.Headers.Add("Content-Type", "text/xml")
-		return ,$client.UploadString($Url, $Data)
+		$client.UploadString($Url, $Data)
     }
 }
 
@@ -134,10 +134,10 @@ function Invoke-TeamcityPutCommand()
     if ( $Url -and $Data )
     {
         $credentials = Get-TeamcityCredentials
-		$client = New-Object Net.WebClient;
-		$client.Credentials = $credentials;
+		$client = New-Object Net.WebClient
+		$client.Credentials = $credentials
 		$client.Headers.Add("Content-Type", "text/plain")
-		return ,$client.UploadString($Url, "PUT", $Data)
+		$client.UploadString($Url, "PUT", $Data)
     }
 }
 
@@ -150,13 +150,16 @@ function Invoke-TeamcityDeleteCommand()
     )
 
     $credentials = Get-TeamcityCredentials
-    $username = $credentials.username;
-    $password = $credentials.password;    
+    $username = $credentials.username
+    $password = $credentials.password    
     
     $client = [Net.WebRequest]::Create($url)
     $encodedHeader = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${username}:${pass}"))
     $client.Headers.Add("Authorization", "Basic $encodedHeader")
-    return ,$deleteRequest.GetResponse()
+    $resp = $webRequest.GetResponse()
+    $rs = $resp.GetResponseStream()
+    $sr = New-Object System.IO.StreamReader -argumentList $rs
+    $sr.ReadToEnd()
 }
 
 ################################################
