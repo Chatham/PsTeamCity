@@ -186,7 +186,7 @@ function Get-TeamcityCredentials()
 {
     if ( $null -eq $script:g_TeamcityCredentials )
     {
-        trap { Write-Error "ERROR: You must enter your Teamcity credentials for Posh-Teamcity to work!"; continue }
+        trap { Write-Error "ERROR: You must enter your Teamcity credentials for PsTeamcity to work!"; continue }
         $c = Get-Credential
         if ( $c )
         {
