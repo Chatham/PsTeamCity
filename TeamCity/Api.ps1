@@ -97,9 +97,9 @@ function Invoke-TeamcityGetCommand()
     if ( $Url )
     {
         $credentials = Get-TeamcityCredentials
-		$client = New-Object Net.WebClient
-		$client.Credentials = $credentials
-		$client.DownloadString($url)
+        $client = New-Object Net.WebClient
+        $client.Credentials = $credentials
+        $client.DownloadString($url)
     }
 }
 
@@ -115,10 +115,10 @@ function Invoke-TeamcityPostCommand()
     if ( $Url -and $Data )
     {
         $credentials = Get-TeamcityCredentials
-		$client = New-Object Net.WebClient
-		$client.Credentials = $credentials
-		$client.Headers.Add("Content-Type", "text/xml")
-		$client.UploadString($Url, $Data)
+        $client = New-Object Net.WebClient
+        $client.Credentials = $credentials
+        $client.Headers.Add("Content-Type", "text/xml")
+        $client.UploadString($Url, $Data)
     }
 }
 
@@ -134,10 +134,10 @@ function Invoke-TeamcityPutCommand()
     if ( $Url -and $Data )
     {
         $credentials = Get-TeamcityCredentials
-		$client = New-Object Net.WebClient
-		$client.Credentials = $credentials
-		$client.Headers.Add("Content-Type", "text/plain")
-		$client.UploadString($Url, "PUT", $Data)
+        $client = New-Object Net.WebClient
+        $client.Credentials = $credentials
+        $client.Headers.Add("Content-Type", "text/plain")
+        $client.UploadString($Url, "PUT", $Data)
     }
 }
 
