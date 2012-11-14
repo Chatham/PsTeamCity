@@ -103,23 +103,17 @@ function Invoke-TeamcityGetCommand()
     }
 }
 
-function Invoke-TeamcityPostCommand()
+function Invoke-TeamcityPutCommand()
 {
     [CmdletBinding()]
     param
     (
         [string] $Url = $null, 
-        [string] $Data = $null
+        [string] $Data = $null,
+        [string] $ContentType = "text/xml"
     )
 
-    if ( $Url -and $Data )
-    {
-        $credentials = Get-TeamcityCredentials
-        $client = New-Object Net.WebClient
-        $client.Credentials = $credentials
-        $client.Headers.Add("Content-Type", "text/xml")
-        $client.UploadString($Url, $Data)
-    }
+    Invoke-TeamcityPostPutCommand -Url $Url -Data $Data -Method "POST" -ContentType $ContentType
 }
 
 function Invoke-TeamcityPutCommand()
@@ -128,7 +122,22 @@ function Invoke-TeamcityPutCommand()
     param
     (
         [string] $Url = $null, 
-        [string] $Data = $null
+        [string] $Data = $null,
+        [string] $ContentType = "text/plain"
+    )
+
+    Invoke-TeamcityPostPutCommand -Url $Url -Data $Data -Method "PUT" -ContentType $ContentType
+}
+
+function Invoke-TeamcityPostPutCommand()
+{
+    [CmdletBinding()]
+    param
+    (
+        [string] $Url = $null, 
+        [string] $Data = $null,
+        [string] $Method = $null,
+        [string] $ContentType = $null
     )
 
     if ( $Url -and $Data )
@@ -136,8 +145,8 @@ function Invoke-TeamcityPutCommand()
         $credentials = Get-TeamcityCredentials
         $client = New-Object Net.WebClient
         $client.Credentials = $credentials
-        $client.Headers.Add("Content-Type", "text/plain")
-        $client.UploadString($Url, "PUT", $Data)
+        $client.Headers.Add("Content-Type", $ContentType)
+        $client.UploadString($Url, $Method, $Data)
     }
 }
 
