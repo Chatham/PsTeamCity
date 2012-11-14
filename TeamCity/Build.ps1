@@ -7,17 +7,17 @@
     )
     
     $apiBase = Get-TeamcityApiBaseUrl
-	$allBuildData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/builds?count=$Count&start=$Start")
+    $allBuildData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/builds?count=$Count&start=$Start")
     
-	$allBuilds = @()
-	foreach( $buildData in $allBuildData.builds.ChildNodes )
-	{
+    $allBuilds = @()
+    foreach( $buildData in $allBuildData.builds.ChildNodes )
+    {
         $buildType = New-BuildType -Id $buildData.buildTypeId
-		$build = New-Build -Id $buildData.id -Number $buildData.number -Status $buildData.status -StartData $buildData.startDate -Href $buildData.href -BuildType $buildType
+        $build = New-Build -Id $buildData.id -Number $buildData.number -Status $buildData.status -StartData $buildData.startDate -Href $buildData.href -BuildType $buildType
         $allBuilds = $allBuilds + $build
-	}
-	
-	$allBuilds
+    }
+    
+    $allBuilds
 }
 
 function Get-Build()
@@ -45,11 +45,11 @@ function Get-Build()
         
         $properties = New-PropertyGroup $buildData.properties
         $startDate = $buildData.startDate | ConvertFrom-DateString -FormatString "yyyyMMddTHHmmsszzz"
-        if ( $buildData.finishDate )
+        try
         {
             $finishDate = $buildData.finishDate | ConvertFrom-DateString -FormatString "yyyyMMddTHHmmsszzz"
         }
-        else
+        catch
         {
             $finishDate = $null
         }
@@ -63,7 +63,7 @@ function Get-Build()
             foreach ( $depBuildData in $buildData.Get_Item("snapshot-dependencies").ChildNodes )
             {
                 $buildType = New-BuildType -Id $depBuildData.buildTypeId
-        		$build = New-Build -Id $depBuildData.id -Number $depBuildData.number -Status $depBuildData.status -StartData $depBuildData.startDate -Href $depBuildData.href -BuildType $buildType -WebUrl $depBuildData.webUrl
+                $build = New-Build -Id $depBuildData.id -Number $depBuildData.number -Status $depBuildData.status -StartData $depBuildData.startDate -Href $depBuildData.href -BuildType $buildType -WebUrl $depBuildData.webUrl
                 $snapshotDependencies = $snapshotDependencies + $build            
             }
         }
@@ -74,7 +74,7 @@ function Get-Build()
             foreach ( $depBuildData in $buildData.Get_Item("artifact-dependencies").ChildNodes )
             {
                 $buildType = New-BuildType -Id $depBuildData.buildTypeId
-        		$build = New-Build -Id $depBuildData.id -Number $depBuildData.number -Status $depBuildData.status -StartData $depBuildData.startDate -Href $depBuildData.href -BuildType $buildType -WebUrl $depBuildData.webUrl
+                $build = New-Build -Id $depBuildData.id -Number $depBuildData.number -Status $depBuildData.status -StartData $depBuildData.startDate -Href $depBuildData.href -BuildType $buildType -WebUrl $depBuildData.webUrl
                 $artifactDependencies = $artifactDependencies + $build            
             }
         }

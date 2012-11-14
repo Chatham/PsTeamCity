@@ -1,17 +1,17 @@
 ﻿function Get-AllBuildTypes()
 {
     $apiBase = Get-TeamcityApiBaseUrl
-	$allBuildTypeData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/buildTypes")
+    $allBuildTypeData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/buildTypes")
     
-	$allBuildTypes = @()
-	foreach( $buildTypeData in $allBuildTypeData.buildTypes.ChildNodes )
-	{
+    $allBuildTypes = @()
+    foreach( $buildTypeData in $allBuildTypeData.buildTypes.ChildNodes )
+    {
         $project = New-Project -Name $buildTypeData.projectName -Id $buildTypeData.projectId
-		$buildType = New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -WebUrl $buildTypeData.webUrl -Project $project
+        $buildType = New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -WebUrl $buildTypeData.webUrl -Project $project
         $allBuildTypes = $allBuildTypes + $buildType
-	}
-	
-	$allBuildTypes
+    }
+    
+    $allBuildTypes
 <#
 .Synopsis
     Retrieve all build types.

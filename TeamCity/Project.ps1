@@ -1,16 +1,16 @@
 ﻿function Get-AllProjects()
 {
     $apiBase = Get-TeamcityApiBaseUrl
-	$allProjectData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/projects")
+    $allProjectData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/projects")
 
-	$allProjects = @()
-	foreach( $projectData in $allProjectData.projects.ChildNodes )
-	{
-		$project = New-Project -Id $projectData.id -Name $projectData.name -Href $projectData.href
+    $allProjects = @()
+    foreach( $projectData in $allProjectData.projects.ChildNodes )
+    {
+        $project = New-Project -Id $projectData.id -Name $projectData.name -Href $projectData.href
         $allProjects = $allProjects + $project
-	}
-	
-	$allProjects
+    }
+    
+    $allProjects
 <#
 .Synopsis
     Retrieve all projects.
