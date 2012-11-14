@@ -6,7 +6,8 @@
 	$allBuildTypes = @()
 	foreach( $buildTypeData in $allBuildTypeData.buildTypes.ChildNodes )
 	{
-		$buildType = New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -ProjectName $buildTypeData.projectName -ProjectId $buildTypeData.projectId -WebUrl $buildTypeData.webUrl
+        $project = New-Project -Name $buildTypeData.projectName -Id $buildTypeData.projectId
+		$buildType = New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -WebUrl $buildTypeData.webUrl -Project $project
         $allBuildTypes = $allBuildTypes + $buildType
 	}
 	
@@ -43,15 +44,15 @@ function Get-BuildType()
         {
             $buildTypeUrl = "$apiBase/httpAuth/app/rest/buildTypes/$BuildTypeLocator"
         }
-        $buildTypeData = [xml]$(Invoke-TeamcityGetCommand $buildTypeUrl)
+        $buildTypeData = $([xml]$(Invoke-TeamcityGetCommand $buildTypeUrl)).buildType
         
-        $parameters = New-PropertyGroup $buildTypeData.buildType.parameters
-        $settings = New-PropertyGroup $buildTypeData.buildType.settings
+        $parameters = New-PropertyGroup $buildTypeData.parameters
+        $settings = New-PropertyGroup $buildTypeData.settings
 
         $snapshotDependencies = @()
-        if ( $buildTypeData.buildType.Get_Item("snapshot-dependencies") ) 
+        if ( $buildTypeData.Get_Item("snapshot-dependencies") ) 
         {
-            foreach ( $snapshotData in $buildTypeData.buildType.Get_Item("snapshot-dependencies").ChildNodes )
+            foreach ( $snapshotData in $buildTypeData.Get_Item("snapshot-dependencies").ChildNodes )
             {
                 $properties = New-PropertyGroup $snapshotData.properties
                 $snapshot = New-Dependency -Id $snapshotData.id -Type $snapshotData.type -Properties $properties
@@ -60,9 +61,9 @@ function Get-BuildType()
         }
         
         $artifactDependencies = @()
-        if ( $buildTypeData.buildType.Get_Item("artifact-dependencies") ) 
+        if ( $buildTypeData.Get_Item("artifact-dependencies") ) 
         {
-            foreach ( $snapshotData in $buildTypeData.buildType.Get_Item("snapshot-dependencies").ChildNodes )
+            foreach ( $snapshotData in $buildTypeData.Get_Item("snapshot-dependencies").ChildNodes )
             {
                 $properties = New-PropertyGroup $snapshotData.properties
                 $snapshot = New-Dependency -Id $snapshotData.id -Type $snapshotData.type -Properties $properties
@@ -70,7 +71,10 @@ function Get-BuildType()
             }
         }
         
-        New-BuildType -Id $buildTypeData.buildType.id -Name $buildTypeData.buildType.name -Href $buildTypeData.buildType.href -WebUrl $buildTypeData.buildType.webUrl `
+        $projectData = $buildTypeData.project
+        $project = New-Project -Id $projectData.id -Name $projectData.name -Href $projectData.href
+        
+        New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -WebUrl $buildTypeData.webUrl -Project $project `
             -Parameters $parameters -Settings $settings -SnapshotDependencies $snapshotDependencies -ArtifactDependencies $artifactDependencies
     }
 <#

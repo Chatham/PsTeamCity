@@ -43,22 +43,22 @@ function Get-Project()
         {
             $projectUrl = "$apiBase/httpAuth/app/rest/projects/$ProjectLocator"
         }
-        $projectData = [xml]$(Invoke-TeamcityGetCommand $projectUrl)
+        $projectData = $([xml]$(Invoke-TeamcityGetCommand $projectUrl)).project
         
         $buildTypes = @()
-        if ( $projectData.project.buildTypes ) 
+        if ( $projectData.buildTypes ) 
         {
-            foreach ( $buildType in $projectData.project.buildTypes.ChildNodes )
+            foreach ( $buildType in $projectData.buildTypes.ChildNodes )
             {
                 $buildType = New-BuildType -Id $buildType.id -Href $buildType.href -Name $buildType.name -WebUrl $buildType.webUrl
                 $buildTypes = $buildTypes + $buildType
             }
         }
 
-        $parameters = New-PropertyGroup $projectData.project.parameters
+        $parameters = New-PropertyGroup $projectData.parameters
         
-        New-Project -Id $projectData.project.id -Name $projectData.project.name -Href $projectData.project.href -Parameters $parameters -WebUrl $projectData.project.webUrl`
-            -Descripion $projectData.project.description -BuildTypes $buildTypes
+        New-Project -Id $projectData.id -Name $projectData.name -Href $projectData.href -Parameters $parameters -WebUrl $projectData.webUrl`
+            -Descripion $projectData.description -Archived $projectData.archived -BuildTypes $buildTypes
     }
 <#
 .Synopsis
