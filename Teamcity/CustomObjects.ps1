@@ -103,6 +103,7 @@ function New-Build()
     $obj | Add-Member NoteProperty -Name Id -Value $Id
     $obj | Add-Member NoteProperty -Name Number -Value $Number
     $obj | Add-Member NoteProperty -Name Status -Value $Status
+    $obj | Add-Member NoteProperty -Name StatusText -Value $StatusText
     $obj | Add-Member NoteProperty -Name Href -Value $Href
     $obj | Add-Member NoteProperty -Name WebUrl -Value $WebUrl
     if ( $Personal -ne "" ) { [bool]$Personal = [System.Convert]::ToBoolean($Personal) }
@@ -157,7 +158,7 @@ function New-Agent()
 
     $obj = New-Object PSObject
     $obj | Add-Member NoteProperty -Name Id -Value $Id
-    $obj | Add-Member NoteProperty -Name Type -Value $Type 
+    $obj | Add-Member NoteProperty -Name Name -Value $Name 
     $obj | Add-Member NoteProperty -Name Href -Value $Href
     $obj | Add-Member NoteProperty -Name Ip -Value $Ip
     $obj | Add-Member NoteProperty -Name Properties -Value $Properties
