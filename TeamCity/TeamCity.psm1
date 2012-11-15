@@ -4,6 +4,7 @@ Set-StrictMode -Version Latest
 
 Push-Location $psScriptRoot
 . ./Api.ps1
+. ./Shared.ps1
 . ./External.ps1
 . ./CustomObjects.ps1
 . ./Project.ps1
@@ -30,9 +31,19 @@ Export-ModuleMember Get-Project
 #BuildType.ps1
 Export-ModuleMember Get-AllBuildTypes
 Export-ModuleMember Get-BuildType
-Export-ModuleMember Get-AllBuildTypeParameters
-Export-ModuleMember Get-BuildTypeParameter
 
 #Build.ps1
 Export-ModuleMember Get-AllBuilds
 Export-ModuleMember Get-Build
+
+#CustomObjects.ps1
+Export-ModuleMember New-BuildType
+Export-ModuleMember New-Project
+Export-ModuleMember New-Dependency
+Export-ModuleMember New-PropertyGroup
+Export-ModuleMember New-Feature
+Export-ModuleMember New-Trigger
+
+#Shared.ps1
+Export-ModuleMember Get-Parameter
+Export-ModuleMember Get-AllParameters
