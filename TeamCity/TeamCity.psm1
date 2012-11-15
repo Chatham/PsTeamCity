@@ -30,6 +30,8 @@ Export-ModuleMember Get-Project
 #BuildType.ps1
 Export-ModuleMember Get-AllBuildTypes
 Export-ModuleMember Get-BuildType
+Export-ModuleMember Get-AllBuildTypeParameters
+Export-ModuleMember Get-BuildTypeParameter
 
 #Build.ps1
 Export-ModuleMember Get-AllBuilds

@@ -45,6 +45,10 @@ function New-BuildType()
     $obj | Add-Member NoteProperty -Name Id -Value $Id
     $obj | Add-Member NoteProperty -Name Name -Value $Name
     $obj | Add-Member NoteProperty -Name Description -Value $Description
+    if ( $Id -and ( $null -eq $Href ) )
+    {
+        $Href = "/httpAuth/app/rest/buildTypes/id:$Id"
+    }
     $obj | Add-Member NoteProperty -Name Href -Value $Href
     $obj | Add-Member NoteProperty -Name WebUrl -Value $WebUrl
     if ( $Paused -ne "" ) { [bool]$Paused = [System.Convert]::ToBoolean($Paused) }

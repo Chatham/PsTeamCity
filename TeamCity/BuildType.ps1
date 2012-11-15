@@ -74,7 +74,7 @@ function Get-BuildType()
         $projectData = $buildTypeData.project
         $project = New-Project -Id $projectData.id -Name $projectData.name -Href $projectData.href
         
-        New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -WebUrl $buildTypeData.webUrl -Project $project `
+        New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -WebUrl $buildTypeData.webUrl -Project $project -Paused $buildTypeData.paused `
             -Parameters $parameters -Settings $settings -SnapshotDependencies $snapshotDependencies -ArtifactDependencies $artifactDependencies
     }
 <#
@@ -91,4 +91,59 @@ function Get-BuildType()
     Get-BuildType -ProjectLocator "id:bt123"
     Retrieves detailed build type information for id:bt123
 #>
+}
+
+function Get-AllBuildTypeParameters()
+{
+    [CmdletBinding()]
+    param
+    (
+        [string] $BuildTypeLocator = $null,
+        [Parameter(ValueFromPipeline=$true)]
+        $BuildType = $null
+    )
+    
+    if ( $BuildType -or $BuildTypeLocator )
+    {
+        $apiBase = Get-TeamcityApiBaseUrl
+        if ( $BuildType )
+        {
+            $buildTypeUrl = $apiBase + $BuildType.Href
+        }
+        else
+        {
+            $buildTypeUrl = "$apiBase/httpAuth/app/rest/buildTypes/$BuildTypeLocator"
+        }
+        $buildTypeUrl = "$buildTypeUrl/parameters"
+        $parameters = $([xml]$(Invoke-TeamcityGetCommand $buildTypeUrl)).properties
+        New-PropertyGroup $parameters
+    }
+}
+
+function Get-BuildTypeParameter()
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        $Parameter,
+        [string] $BuildTypeLocator = $null,
+        [Parameter(ValueFromPipeline=$true)]
+        $BuildType = $null
+    )
+    
+    if ( $BuildType -or $BuildTypeLocator )
+    {
+        $apiBase = Get-TeamcityApiBaseUrl
+        if ( $BuildType )
+        {
+            $buildTypeUrl = $apiBase + $BuildType.Href
+        }
+        else
+        {
+            $buildTypeUrl = "$apiBase/httpAuth/app/rest/buildTypes/$BuildTypeLocator"
+        }
+        $buildTypeUrl = "$buildTypeUrl/parameters/$Parameter"
+        Invoke-TeamcityGetCommand $buildTypeUrl
+    }
 }
