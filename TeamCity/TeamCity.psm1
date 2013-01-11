@@ -14,11 +14,15 @@ Pop-Location
 
 $script:g_TeamcityCredentials = $null
 $script:g_TeamcityApiBase = $null
+$script:g_TeamcityGuestAuth = $null
 
 #Api.ps1
 Export-ModuleMember Set-TeamcityApiBaseUrl
+Export-ModuleMember New-TeamcityApiUrl
 Export-ModuleMember Set-TeamcityCredentials
 Export-ModuleMember Reset-TeamcityCredentials
+Export-ModuleMember Set-TeamcityGuestAuth
+Export-ModuleMember Reset-TeamcityGuestAuth
 Export-ModuleMember Invoke-TeamcityGetCommand
 Export-ModuleMember Invoke-TeamcityPostCommand
 Export-ModuleMember Invoke-TeamcityPutCommand

@@ -49,14 +49,49 @@
 #>
 }
 
+
+function Set-TeamcityGuestAuth()
+{
+    [CmdletBinding()]
+    param
+    (
+        [string] $Enabled = $true 
+    )
+
+    $script:g_TeamcityGuestAuth = $Enabled
+<#
+.Synopsis
+    Set TeamCity guest authorization.
+.Description 
+    Make all api calls using guest authorization.
+    
+.Example
+    Set-TeamcityGuestAuth
+#>
+}
+
+function Reset-TeamcityGuestAuth()
+{
+    $script:g_TeamcityGuestAuth = $null
+<#
+.Synopsis
+    Reset Teamcity guest authorization.
+.Description 
+    Reset script guest authorization setting.
+    
+.Example
+    Reset-TeamcityGuestAuth
+#>
+}
+
 function Reset-TeamcityCredentials()
 {
     $script:g_TeamcityCredentials = $null
 <#
 .Synopsis
-    Resets Teamcity credentials.
+    Reset Teamcity credentials.
 .Description 
-    Clears out cached Teamcity credentials.
+    Clear out cached Teamcity credentials.
     
 .Example
     Reset-TeamcityCredentials
@@ -96,14 +131,20 @@ function Invoke-TeamcityGetCommand()
   
     if ( $Url )
     {
-        $credentials = Get-TeamcityCredentials
         $client = New-Object Net.WebClient
-        $client.Credentials = $credentials
-        $client.DownloadString($url)
+        $client.Headers.Add("Content-Type", "text/xml")
+
+        if ( !$script:g_TeamcityGuestAuth )
+        {
+            $credentials = Get-TeamcityCredentials
+            $client.Credentials = $credentials
+        }
+
+        $client.DownloadString($Url)
     }
 }
 
-function Invoke-TeamcityPutCommand()
+function Invoke-TeamcityPostCommand()
 {
     [CmdletBinding()]
     param
@@ -142,11 +183,15 @@ function Invoke-TeamcityPostPutCommand()
 
     if ( $Url -and $Data )
     {
-        $credentials = Get-TeamcityCredentials
         $client = New-Object Net.WebClient
-        $client.Credentials = $credentials
         $client.Headers.Add("Content-Type", $ContentType)
-        $client.UploadString($Url, $Method, $Data)
+
+        if ( !$script:g_TeamcityGuestAuth )
+        {
+            $credentials = Get-TeamcityCredentials
+            $client.Credentials = $credentials
+            $client.UploadString($Url, $Method, $Data)
+        }
     }
 }
 
@@ -158,13 +203,18 @@ function Invoke-TeamcityDeleteCommand()
         [string] $Url = $null
     )
 
-    $credentials = Get-TeamcityCredentials
-    $username = $credentials.username
-    $password = $credentials.password    
-    
     $client = [Net.WebRequest]::Create($url)
-    $encodedHeader = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${username}:${pass}"))
-    $client.Headers.Add("Authorization", "Basic $encodedHeader")
+
+    if ( !$script:g_TeamcityGuestAuth )
+    {
+        $credentials = Get-TeamcityCredentials
+        $username = $credentials.username
+        $password = $credentials.password    
+        
+        $encodedHeader = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${username}:${pass}"))
+        $client.Headers.Add("Authorization", "Basic $encodedHeader")
+    }
+
     $resp = $webRequest.GetResponse()
     $rs = $resp.GetResponseStream()
     $sr = New-Object System.IO.StreamReader -argumentList $rs
@@ -179,7 +229,28 @@ function Get-TeamcityApiBaseUrl()
     {
         Set-TeamcityApiBaseUrl
     }
-    $script:g_TeamcityApiBase
+
+    if ($script:g_TeamcityGuestAuth)
+    {
+        "$script:g_TeamcityApiBase/guestAuth/app/rest"
+    }
+    else
+    {
+        "$script:g_TeamcityApiBase/httpAuth/app/rest"
+    }
+}
+
+function New-TeamcityApiUrl()
+{
+    [CmdletBinding()]
+    param
+    (
+        [string]$UrlStub
+    )
+
+    $baseUrl = Get-TeamcityApiBaseUrl
+    $stub = $UrlStub -Replace "^(httpAuth|guestAuth)\/app\/rest", ""
+    $baseUrl + $stub
 }
 
 function Get-TeamcityCredentials()

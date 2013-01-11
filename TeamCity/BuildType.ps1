@@ -1,7 +1,7 @@
 ﻿function Get-AllBuildTypes()
 {
-    $apiBase = Get-TeamcityApiBaseUrl
-    $allBuildTypeData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/buildTypes")
+    $url = New-TeamcityApiUrl "/buildTypes"
+    $allBuildTypeData = [xml]$(Invoke-TeamcityGetCommand $url)
     
     $allBuildTypes = @()
     foreach( $buildTypeData in $allBuildTypeData.buildTypes.ChildNodes )
@@ -35,14 +35,13 @@ function Get-BuildType()
     
     if ( $BuildType -or $BuildTypeLocator )
     {
-        $apiBase = Get-TeamcityApiBaseUrl
         if ( $BuildType )
         {
-            $buildTypeUrl = $apiBase + $BuildType.Href
+            $buildTypeUrl = New-TeamcityApiUrl $BuildType.Href
         }
         else
         {
-            $buildTypeUrl = "$apiBase/httpAuth/app/rest/buildTypes/$BuildTypeLocator"
+            $buildTypeUrl = New-TeamcityApiUrl "/buildTypes/$BuildTypeLocator"
         }
         $buildTypeData = $([xml]$(Invoke-TeamcityGetCommand $buildTypeUrl)).buildType
         

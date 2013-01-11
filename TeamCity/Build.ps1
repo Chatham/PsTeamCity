@@ -6,8 +6,8 @@
         [int]$Start = 0
     )
     
-    $apiBase = Get-TeamcityApiBaseUrl
-    $allBuildData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/builds?count=$Count&start=$Start")
+    $url = New-TeamcityApiUrl "/builds?count=$Count&start=$Start"
+    $allBuildData = [xml]$(Invoke-TeamcityGetCommand $url)
     
     $allBuilds = @()
     foreach( $buildData in $allBuildData.builds.ChildNodes )
@@ -32,15 +32,15 @@ function Get-Build()
 
     if ( $Build -or $BuildLocator )
     {
-        $apiBase = Get-TeamcityApiBaseUrl
         if ( $Build )
         {
-            $buildUrl = $apiBase + $Build.Href
+            $buildUrl = New-TeamcityApiUrl $Build.Href
         }
         else
         {
-            $buildUrl = "$apiBase/httpAuth/app/rest/builds/$BuildLocator"
+            $buildUrl = New-TeamcityApiUrl "/builds/$BuildLocator"
         }
+        Write-Verbose "Get-Build URL: $buildUrl"
         $buildData = $([xml]$(Invoke-TeamcityGetCommand $buildUrl)).build
         
         $properties = New-PropertyGroup $buildData.properties

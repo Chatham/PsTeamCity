@@ -7,8 +7,8 @@
         $Object
     )
     
-    $apiBase = Get-TeamcityApiBaseUrl
-    $parameterUrl = $apiBase + $Object.Href + "/parameters"
+    $url = $Object.Href + "/parameters"
+    $parameterUrl = New-TeamcityApiUrl $url
     $parameters = $([xml]$(Invoke-TeamcityGetCommand $parameterUrl)).properties
     New-PropertyGroup $parameters    
 }
@@ -24,7 +24,8 @@ function Get-Parameter()
         $Object
     )
     
-    $apiBase = Get-TeamcityApiBaseUrl
-    $parameterUrl = $apiBase + $Object.Href + "/parameters/$Parameter"
+    $url = $Object.Href + "/parameters/$Parameter"
+    $parameterUrl = New-TeamcityApiUrl $url
+    Write-Verbose "[Get-Parameter] Url: $parameterUrl"
     Invoke-TeamcityGetCommand $parameterUrl
 }

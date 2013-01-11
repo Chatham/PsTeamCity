@@ -1,7 +1,7 @@
 ﻿function Get-AllProjects()
 {
-    $apiBase = Get-TeamcityApiBaseUrl
-    $allProjectData = [xml]$(Invoke-TeamcityGetCommand "$apiBase/httpAuth/app/rest/projects")
+    $url = New-TeamcityApiUrl "/projects"
+    $allProjectData = [xml]$(Invoke-TeamcityGetCommand $url)
 
     $allProjects = @()
     foreach( $projectData in $allProjectData.projects.ChildNodes )
@@ -34,14 +34,13 @@ function Get-Project()
     
     if ( $Project -or $ProjectLocator )
     {
-        $apiBase = Get-TeamcityApiBaseUrl
         if ( $Project )
         {
-            $projectUrl = $apiBase + $Project.Href
+            $projectUrl = New-TeamcityApiUrl $Project.Href
         }
         else
         {
-            $projectUrl = "$apiBase/httpAuth/app/rest/projects/$ProjectLocator"
+            $projectUrl = New-TeamcityApiUrl "/projects/$ProjectLocator"
         }
         $projectData = $([xml]$(Invoke-TeamcityGetCommand $projectUrl)).project
         
