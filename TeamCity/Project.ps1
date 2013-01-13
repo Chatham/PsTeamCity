@@ -4,8 +4,7 @@
     $allProjectData = [xml]$(Invoke-TeamcityGetCommand $url)
 
     $allProjects = @()
-    foreach( $projectData in $allProjectData.projects.ChildNodes )
-    {
+    foreach( $projectData in $allProjectData.projects.ChildNodes ) {
         $project = New-Project -Id $projectData.id -Name $projectData.name -Href $projectData.href
         $allProjects = $allProjects + $project
     }
@@ -14,6 +13,7 @@
 <#
 .Synopsis
     Retrieve all projects.
+
 .Description 
     Retrieve summary information for all projects.
     
@@ -25,30 +25,24 @@
 function Get-Project()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $ProjectLocator = $null,
         [Parameter(ValueFromPipeline=$true)]
         $Project = $null
     )
     
-    if ( $Project -or $ProjectLocator )
-    {
-        if ( $Project )
-        {
+    if ( $Project -or $ProjectLocator ) {
+        if ( $Project ) {
             $projectUrl = New-TeamcityApiUrl $Project.Href
         }
-        else
-        {
+        else {
             $projectUrl = New-TeamcityApiUrl "/projects/$ProjectLocator"
         }
         $projectData = $([xml]$(Invoke-TeamcityGetCommand $projectUrl)).project
         
         $buildTypes = @()
-        if ( $projectData.buildTypes ) 
-        {
-            foreach ( $buildType in $projectData.buildTypes.ChildNodes )
-            {
+        if ( $projectData.buildTypes ) {
+            foreach ( $buildType in $projectData.buildTypes.ChildNodes ) {
                 $buildType = New-BuildType -Id $buildType.id -Href $buildType.href -Name $buildType.name -WebUrl $buildType.webUrl
                 $buildTypes = $buildTypes + $buildType
             }
@@ -62,10 +56,13 @@ function Get-Project()
 <#
 .Synopsis
     Retrieve a project.
+
 .Description 
     Retrieves detailed information for a single project.
+
 .Parameter Project
     A project object.
+    
 .Parameter ProjectLocator
     Project locator.
     

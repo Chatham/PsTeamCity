@@ -1,37 +1,36 @@
-﻿function Set-TeamcityCredentials()
+﻿function Set-TeamcityCredentials() 
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $Username = $null, 
         [string] $Password = $null,
         [System.Security.SecureString] $SecureString = $null
     )
 
-    if ( $Username )
-    {
-        if ( $SecureString )
-        {
+    if ( $Username ) {
+        if ( $SecureString ) {
             $script:g_TeamcityCredentials = New-Object System.Net.NetworkCredential -argumentList ($Username, $SecureString)
         }
-        else
-        {
+        else {
             $script:g_TeamcityCredentials = New-Object System.Net.NetworkCredential -argumentList ($Username, $Password)
         }
     }
-    else
-    {
+    else {
         $creds = Get-TeamcityCredentials
     }
 <#
 .Synopsis
     Sets Teamcity credentials.
+
 .Description 
     Explicitly set credentials or be prompted to enter credentials.
+
 .Parameter Username
     Teamcity username.
+
 .Parameter Password
     Teamcity password.
+
 .Parameter SecureString
     Secure string representation of Teamcity password.
     
@@ -50,11 +49,10 @@
 }
 
 
-function Set-TeamcityGuestAuth()
+function Set-TeamcityGuestAuth() 
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $Enabled = $true 
     )
 
@@ -62,6 +60,7 @@ function Set-TeamcityGuestAuth()
 <#
 .Synopsis
     Set TeamCity guest authorization.
+
 .Description 
     Make all api calls using guest authorization.
     
@@ -76,6 +75,7 @@ function Reset-TeamcityGuestAuth()
 <#
 .Synopsis
     Reset Teamcity guest authorization.
+
 .Description 
     Reset script guest authorization setting.
     
@@ -90,6 +90,7 @@ function Reset-TeamcityCredentials()
 <#
 .Synopsis
     Reset Teamcity credentials.
+
 .Description 
     Clear out cached Teamcity credentials.
     
@@ -98,10 +99,9 @@ function Reset-TeamcityCredentials()
 #>
 }
 
-function Set-TeamcityApiBaseUrl()
+function Set-TeamcityApiBaseUrl() 
 {
-    param 
-    (
+    param (
         [Parameter(Mandatory=$true)]
         [ValidateScript({$_ -match "\w*://.*[^/]`$" })]
         [string] $BaseUrl = "http://teamcity:8111"
@@ -111,8 +111,10 @@ function Set-TeamcityApiBaseUrl()
 <#
 .Synopsis
     Sets Teamcity API URL.
+
 .Description 
     Specify the base url for API requests.
+
 .Parameter Username
     BaseUrl Base API Url.
     
@@ -121,21 +123,18 @@ function Set-TeamcityApiBaseUrl()
 #>
 }
 
-function Invoke-TeamcityGetCommand()
+function Invoke-TeamcityGetCommand() 
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $Url = $null
     )
   
-    if ( $Url )
-    {
+    if ( $Url ) {
         $client = New-Object Net.WebClient
         $client.Headers.Add("Content-Type", "text/xml")
 
-        if ( !$script:g_TeamcityGuestAuth )
-        {
+        if ( !$script:g_TeamcityGuestAuth ) {
             $credentials = Get-TeamcityCredentials
             $client.Credentials = $credentials
         }
@@ -147,8 +146,7 @@ function Invoke-TeamcityGetCommand()
 function Invoke-TeamcityPostCommand()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $Url = $null, 
         [string] $Data = $null,
         [string] $ContentType = "text/xml"
@@ -157,11 +155,9 @@ function Invoke-TeamcityPostCommand()
     Invoke-TeamcityPostPutCommand -Url $Url -Data $Data -Method "POST" -ContentType $ContentType
 }
 
-function Invoke-TeamcityPutCommand()
-{
+function Invoke-TeamcityPutCommand() {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $Url = $null, 
         [string] $Data = $null,
         [string] $ContentType = "text/plain"
@@ -173,21 +169,18 @@ function Invoke-TeamcityPutCommand()
 function Invoke-TeamcityPostPutCommand()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $Url = $null, 
         [string] $Data = $null,
         [string] $Method = $null,
         [string] $ContentType = $null
     )
 
-    if ( $Url -and $Data )
-    {
+    if ( $Url -and $Data ) {
         $client = New-Object Net.WebClient
         $client.Headers.Add("Content-Type", $ContentType)
 
-        if ( !$script:g_TeamcityGuestAuth )
-        {
+        if ( !$script:g_TeamcityGuestAuth ) {
             $credentials = Get-TeamcityCredentials
             $client.Credentials = $credentials
             $client.UploadString($Url, $Method, $Data)
@@ -198,15 +191,13 @@ function Invoke-TeamcityPostPutCommand()
 function Invoke-TeamcityDeleteCommand()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $Url = $null
     )
 
     $client = [Net.WebRequest]::Create($url)
 
-    if ( !$script:g_TeamcityGuestAuth )
-    {
+    if ( !$script:g_TeamcityGuestAuth ) {
         $credentials = Get-TeamcityCredentials
         $username = $credentials.username
         $password = $credentials.password    
@@ -225,17 +216,14 @@ function Invoke-TeamcityDeleteCommand()
 
 function Get-TeamcityApiBaseUrl()
 {
-    if ( $null -eq $script:g_TeamcityApiBase )
-    {
+    if ( $null -eq $script:g_TeamcityApiBase ) {
         Set-TeamcityApiBaseUrl
     }
 
-    if ($script:g_TeamcityGuestAuth)
-    {
+    if ($script:g_TeamcityGuestAuth) {
         "$script:g_TeamcityApiBase/guestAuth/app/rest"
     }
-    else
-    {
+    else {
         "$script:g_TeamcityApiBase/httpAuth/app/rest"
     }
 }
@@ -243,8 +231,7 @@ function Get-TeamcityApiBaseUrl()
 function New-TeamcityApiUrl()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string]$UrlStub
     )
 
@@ -255,12 +242,10 @@ function New-TeamcityApiUrl()
 
 function Get-TeamcityCredentials()
 {
-    if ( $null -eq $script:g_TeamcityCredentials )
-    {
+    if ( $null -eq $script:g_TeamcityCredentials ) {
         trap { Write-Error "ERROR: You must enter your Teamcity credentials for PsTeamcity to work!"; continue }
         $c = Get-Credential
-        if ( $c )
-        {
+        if ( $c ) {
             $username = $c.GetNetworkCredential().Username
             $password = $c.GetNetworkCredential().Password
             $script:g_TeamcityCredentials = New-Object System.Net.NetworkCredential -argumentList ($username, $password)

@@ -4,8 +4,7 @@
     $allBuildTypeData = [xml]$(Invoke-TeamcityGetCommand $url)
     
     $allBuildTypes = @()
-    foreach( $buildTypeData in $allBuildTypeData.buildTypes.ChildNodes )
-    {
+    foreach( $buildTypeData in $allBuildTypeData.buildTypes.ChildNodes ) {
         $project = New-Project -Name $buildTypeData.projectName -Id $buildTypeData.projectId
         $buildType = New-BuildType -Id $buildTypeData.id -Name $buildTypeData.name -Href $buildTypeData.href -WebUrl $buildTypeData.webUrl -Project $project
         $allBuildTypes = $allBuildTypes + $buildType
@@ -15,6 +14,7 @@
 <#
 .Synopsis
     Retrieve all build types.
+
 .Description 
     Retrieve summary information for all build types.
     
@@ -26,21 +26,17 @@
 function Get-BuildType()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [string] $BuildTypeLocator = $null,
         [Parameter(ValueFromPipeline=$true)]
         $BuildType = $null
     )
     
-    if ( $BuildType -or $BuildTypeLocator )
-    {
-        if ( $BuildType )
-        {
+    if ( $BuildType -or $BuildTypeLocator ) {
+        if ( $BuildType ) {
             $buildTypeUrl = New-TeamcityApiUrl $BuildType.Href
         }
-        else
-        {
+        else {
             $buildTypeUrl = New-TeamcityApiUrl "/buildTypes/$BuildTypeLocator"
         }
         $buildTypeData = $([xml]$(Invoke-TeamcityGetCommand $buildTypeUrl)).buildType
@@ -49,10 +45,8 @@ function Get-BuildType()
         $settings = New-PropertyGroup $buildTypeData.settings
 
         $snapshotDependencies = @()
-        if ( $buildTypeData.Get_Item("snapshot-dependencies") ) 
-        {
-            foreach ( $snapshotData in $buildTypeData.Get_Item("snapshot-dependencies").ChildNodes )
-            {
+        if ( $buildTypeData.Get_Item("snapshot-dependencies") )  {
+            foreach ( $snapshotData in $buildTypeData.Get_Item("snapshot-dependencies").ChildNodes ) {
                 $properties = New-PropertyGroup $snapshotData.properties
                 $snapshot = New-Dependency -Id $snapshotData.id -Type $snapshotData.type -Properties $properties
                 $snapshotDependencies = $snapshotDependencies + $snapshot
@@ -60,10 +54,8 @@ function Get-BuildType()
         }
         
         $artifactDependencies = @()
-        if ( $buildTypeData.Get_Item("artifact-dependencies") ) 
-        {
-            foreach ( $snapshotData in $buildTypeData.Get_Item("snapshot-dependencies").ChildNodes )
-            {
+        if ( $buildTypeData.Get_Item("artifact-dependencies") ) {
+            foreach ( $snapshotData in $buildTypeData.Get_Item("snapshot-dependencies").ChildNodes ) {
                 $properties = New-PropertyGroup $snapshotData.properties
                 $snapshot = New-Dependency -Id $snapshotData.id -Type $snapshotData.type -Properties $properties
                 $artifactDependencies = $artifactDependencies + $snapshot
@@ -79,10 +71,13 @@ function Get-BuildType()
 <#
 .Synopsis
     Retrieve a build type.
+
 .Description 
     Retrieve detailed information for a single build type.
+
 .Parameter BuildTypeLocator
     Build type locator.
+    
 .Parameter BuildType
     A project object.
     

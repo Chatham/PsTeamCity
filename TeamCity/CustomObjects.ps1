@@ -1,7 +1,6 @@
 ﻿function New-Project() 
 {
-    param 
-    (
+    param (
         [string] $Id, 
         [string] $Name, 
         [string] $Href,
@@ -25,8 +24,7 @@
 
 function New-BuildType()
 {
-    param
-    (
+    param (
         [string] $Id,
         [string] $Name,
         [string] $Description,
@@ -45,8 +43,7 @@ function New-BuildType()
     $obj | Add-Member NoteProperty -Name Id -Value $Id
     $obj | Add-Member NoteProperty -Name Name -Value $Name
     $obj | Add-Member NoteProperty -Name Description -Value $Description
-    if ( $Id -and ( $Href -eq "" ) )
-    {
+    if ( $Id -and ( $Href -eq "" ) ) {
         $Href = "/buildTypes/id:$Id"
     }
     $obj | Add-Member NoteProperty -Name Href -Value $Href
@@ -64,8 +61,7 @@ function New-BuildType()
 
 function New-BuildStep() 
 {
-    param 
-    (
+    param (
         [string] $Id,
         [string] $Name, 
         [string] $Type,
@@ -82,8 +78,7 @@ function New-BuildStep()
 
 function New-Build()
 {
-    param
-    (
+    param (
         [string] $Id,
         [string] $Number,
         [string] $Status,
@@ -130,8 +125,7 @@ function New-Build()
 
 function New-Dependency() 
 {
-    param 
-    (
+    param (
         [string] $Id,
         [string] $Type, 
         [PSObject] $Properties
@@ -148,8 +142,7 @@ Set-Alias New-Trigger New-Dependency
 
 function New-Agent() 
 {
-    param 
-    (
+    param (
         [string] $Id,
         [string] $Name, 
         [string] $Href,
@@ -179,16 +172,13 @@ function New-Agent()
 
 function New-PropertyGroup()
 {
-    param 
-    (
+    param (
         [PSObject] $PropertyGroup 
     )
     
     $group = @()
-    if ( $PropertyGroup )
-    {
-        foreach ( $property in $PropertyGroup.ChildNodes )
-        {
+    if ( $PropertyGroup ) {
+        foreach ( $property in $PropertyGroup.ChildNodes ) {
             $obj = New-Object PSObject
             $obj | Add-Member NoteProperty -Name Name -Value $property.name
             $obj | Add-Member NoteProperty -Name Value -Value $property.value

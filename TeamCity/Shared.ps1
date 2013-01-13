@@ -1,8 +1,7 @@
 ﻿function Get-AllParameters()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [Parameter(ValueFromPipeline=$true, Mandatory=$true)]
         $Object
     )
@@ -16,8 +15,7 @@
 function Get-Parameter()
 {
     [CmdletBinding()]
-    param
-    (
+    param (
         [Parameter(Mandatory=$true)]
         [string] $Parameter,
         [Parameter(ValueFromPipeline=$true, Mandatory=$true)]
