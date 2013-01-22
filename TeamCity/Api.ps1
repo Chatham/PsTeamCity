@@ -236,7 +236,7 @@ function New-TeamcityApiUrl()
     )
 
     $baseUrl = Get-TeamcityApiBaseUrl
-    $stub = $UrlStub -Replace "^(httpAuth|guestAuth)\/app\/rest", ""
+    $stub = $UrlStub -Replace "^\/(httpAuth|guestAuth)\/app\/rest", ""
     $baseUrl + $stub
 }
 
