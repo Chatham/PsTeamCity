@@ -11,23 +11,22 @@
     )
 
     $ArchivedValueToAssign = $Archived
-	
-	if ( $Archived -ne "" ) 
-	{ 
-		[bool]$ArchivedValueToAssign = [System.Convert]::ToBoolean($Archived) 
-	}
-	
-	$NewProject = New-Object PSObject -Property @{
-	    Id = $Id
-	    Name = $Name
-	    Href = $Href
-	    WebUrl = $WebUrl
-	    Archived = $ArchivedValueToAssign
-	    Parameters = $Parameters
-	    BuildTypes = $BuildTypes
-	}
-	
-	return ,$NewProject
+    
+    if ( $Archived -ne "" ) 
+    { 
+        [bool]$ArchivedValueToAssign = [System.Convert]::ToBoolean($Archived) 
+    }
+    
+    $NewProject = New-Object PSObject -Property @{
+        Id = $Id
+        Name = $Name
+        Href = $Href
+        WebUrl = $WebUrl
+        Archived = $ArchivedValueToAssign
+        Parameters = $Parameters
+        BuildTypes = $BuildTypes
+    }
+    $NewProject
 }
 
 function New-BuildType()
@@ -47,28 +46,27 @@ function New-BuildType()
         [PSObject] $VcsRoots
     )
     
-	$HrefToAssign = $Href
-	if( $Id -and ( $Href -eq "" ) )	{ $HrefToAssign = "/buildTypes/id:$Id" }
-	
-	$PausedToAssign = $Paused
-	if ( $Paused -ne "" ) { [bool]$pausedToAssign = [System.Convert]::ToBoolean($Paused) }
-	
-    $newBuildType = New-Object PSObject -Property @{
-    	Id = $Id
-    	Name = $Name
-    	Description = $Description
-    	Href = $HrefToAssign
-    	WebUrl = $WebUrl
+    $HrefToAssign = $Href
+    if( $Id -and ( $Href -eq "" ) ) { $HrefToAssign = "/buildTypes/id:$Id" }
+    
+    $PausedToAssign = $Paused
+    if ( $Paused -ne "" ) { [bool]$pausedToAssign = [System.Convert]::ToBoolean($Paused) }
+    
+    $NewBuildType = New-Object PSObject -Property @{
+        Id = $Id
+        Name = $Name
+        Description = $Description
+        Href = $HrefToAssign
+        WebUrl = $WebUrl
         Paused = $PausedToAssign
-    	Project = $Project
-    	Settings =  $Settings
-    	Parameters = $Parameters
-    	ArtifactDependencies = $ArtifactDependencies
-    	SnapshotDependencies = $SnapshotDependencies
-    	VcsRoots = $VcsRoots
-	}
-	
-    return ,$newBuildType    
+        Project = $Project
+        Settings =  $Settings
+        Parameters = $Parameters
+        ArtifactDependencies = $ArtifactDependencies
+        SnapshotDependencies = $SnapshotDependencies
+        VcsRoots = $VcsRoots
+    }
+    $NewBuildType    
 }
 
 function New-BuildStep() 
@@ -80,13 +78,13 @@ function New-BuildStep()
         [PSObject] $Properties
     )
 
-	$NewBuildStep = New-Object PSObject -Property @{
-   		Id = $Id
-    	Name = $Name
-    	Type = $Type 
-    	Properties = $Properties
-	}
-	return ,$NewBuildStep
+    $NewBuildStep = New-Object PSObject -Property @{
+        Id = $Id
+        Name = $Name
+        Type = $Type 
+        Properties = $Properties
+    }
+    $NewBuildStep
 }
 
 function New-Build()
@@ -110,39 +108,38 @@ function New-Build()
         [PSObject] $SnapshotDependencies,
         [PSObject] $ArtifactDependencies
     )
-	$PersonalToAssign = $Personal
-	if ( $Personal -ne "" ) { [bool]$PersonalToAssign = [System.Convert]::ToBoolean($Personal) }
-	
-	$HistoryToAssign = $History
-	if ( $History -ne "" ) { [bool]$HistoryToAssign = [System.Convert]::ToBoolean($History) }
-	
-	$PinnedToAssign = $Pinned
-	if ( $Pinned -ne "" ) { [bool]$PinnedToAssign = [System.Convert]::ToBoolean($Pinned) }
-	
-	$FinishDateToAssign = $FinishDate
-	if ( $FinishDate -ne "" ) { [DateTimeOffset]$FinishDateToAssign = $FinishDate }
-	
+    $PersonalToAssign = $Personal
+    if ( $Personal -ne "" ) { [bool]$PersonalToAssign = [System.Convert]::ToBoolean($Personal) }
+    
+    $HistoryToAssign = $History
+    if ( $History -ne "" ) { [bool]$HistoryToAssign = [System.Convert]::ToBoolean($History) }
+    
+    $PinnedToAssign = $Pinned
+    if ( $Pinned -ne "" ) { [bool]$PinnedToAssign = [System.Convert]::ToBoolean($Pinned) }
+    
+    $FinishDateToAssign = $FinishDate
+    if ( $FinishDate -ne "" ) { [DateTimeOffset]$FinishDateToAssign = $FinishDate }
+    
     $NewBuild = New-Object PSObject -Property @{
-		Id = $Id
-		Number = $Number
-		Status = $Status
-		StatusText = $StatusText
-		Href = $Href
-		WebUrl = $WebUrl
-		Personal = $Personal
-		History = $History
-		Pinned = $Pinned
-		StartDate = $StartDate
-		FinishDate = $FinishDate
-		BuildType = $BuildType
-		Agent = $Agent
-		Tags = $Tags
-		Properties = $Properties
-		SnapshotDependencies = $SnapshotDependencies
-		ArtifactDependencies = $ArtifactDependencies
-	}
-	
-    return ,$NewBuild
+        Id = $Id
+        Number = $Number
+        Status = $Status
+        StatusText = $StatusText
+        Href = $Href
+        WebUrl = $WebUrl
+        Personal = $Personal
+        History = $History
+        Pinned = $Pinned
+        StartDate = $StartDate
+        FinishDate = $FinishDate
+        BuildType = $BuildType
+        Agent = $Agent
+        Tags = $Tags
+        Properties = $Properties
+        SnapshotDependencies = $SnapshotDependencies
+        ArtifactDependencies = $ArtifactDependencies
+    }
+    $NewBuild
 }
 
 function New-Dependency() 
@@ -153,13 +150,12 @@ function New-Dependency()
         [PSObject] $Properties
     )
 
-	$NewDependency = New-Object PSObject -Property @{
-	    Id = $Id
-	    Type = $Type 
-	    Properties = $Properties
-	}
-	
-	return ,$NewDependency
+    $NewDependency = New-Object PSObject -Property @{
+        Id = $Id
+        Type = $Type 
+        Properties = $Properties
+    }
+    $NewDependency
 }
 
 Set-Alias New-Feature New-Dependency
@@ -178,31 +174,30 @@ function New-Agent()
         [string] $UpToDate
     )
 
-	$AuthorizedToAssign = $Authorized
-	if ( $Authorized -ne "" ) { [bool]$AuthorizedToAssign = [System.Convert]::ToBoolean($Authorized) }
-	
-	$ConnectedToAssign = $Connected
-	if ( $Connected -ne "" ) { [bool]$ConnectedToAssign = [System.Convert]::ToBoolean($Connected) }
-	
-	$EnabledToAssign = $Enabled
-	if ( $Enabled -ne "" ) { [bool]$EnabledToAssign = [System.Convert]::ToBoolean($Enabled) }
-	
-	$UpToDateToAssign = $UpToDate
-	if ( $UpToDate -ne "" ) { [bool]$UpToDateToAssign = [System.Convert]::ToBoolean($UpToDate) }
-	
+    $AuthorizedToAssign = $Authorized
+    if ( $Authorized -ne "" ) { [bool]$AuthorizedToAssign = [System.Convert]::ToBoolean($Authorized) }
+    
+    $ConnectedToAssign = $Connected
+    if ( $Connected -ne "" ) { [bool]$ConnectedToAssign = [System.Convert]::ToBoolean($Connected) }
+    
+    $EnabledToAssign = $Enabled
+    if ( $Enabled -ne "" ) { [bool]$EnabledToAssign = [System.Convert]::ToBoolean($Enabled) }
+    
+    $UpToDateToAssign = $UpToDate
+    if ( $UpToDate -ne "" ) { [bool]$UpToDateToAssign = [System.Convert]::ToBoolean($UpToDate) }
+    
     $NewAgent = New-Object PSObject -Property @{
-		Id = $Id
-		Name = $Name
-		Href = $Href
-		Ip = $Ip
-		Properties = $Properties
-		Authorized = $AuthorizedToAssign
-		Connected = $ConnectedToAssign
-		Enabled = $EnabledToAssign
-		UpToDate = $UpToDateToAssign
-	}
-	
-    return ,$NewAgent
+        Id = $Id
+        Name = $Name
+        Href = $Href
+        Ip = $Ip
+        Properties = $Properties
+        Authorized = $AuthorizedToAssign
+        Connected = $ConnectedToAssign
+        Enabled = $EnabledToAssign
+        UpToDate = $UpToDateToAssign
+    }
+    $NewAgent
 }
 
 function New-PropertyGroup()
@@ -211,15 +206,15 @@ function New-PropertyGroup()
         [PSObject] $PropertyGroup 
     )
     
-    $group = @()
+    $Group = @()
     if ( $PropertyGroup ) {
         foreach ( $property in $PropertyGroup.ChildNodes ) {
             $obj = New-Object PSObject -Property @{
-            	Name = $property.name
-            	Value = $property.value
-			}
-            $group = $group + $obj
+                Name = $property.name
+                Value = $property.value
+            }
+            $Group = $Group + $obj
         }
     }
-    $group
+    $Group
 }
