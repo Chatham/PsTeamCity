@@ -10,16 +10,24 @@
         [PSObject] $BuildTypes
     )
 
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty -Name Id -Value $Id
-    $obj | Add-Member NoteProperty -Name Name -Value $Name
-    $obj | Add-Member NoteProperty -Name Href -Value $Href
-    $obj | Add-Member NoteProperty -Name WebUrl -Value $WebUrl
-    if ( $Archived -ne "" ) { [bool]$Archived = [System.Convert]::ToBoolean($Archived) }
-    $obj | Add-Member NoteProperty -Name Archived -Value $Archived
-    $obj | Add-Member NoteProperty -Name Parameters -Value $Parameters
-    $obj | Add-Member NoteProperty -Name BuildTypes -Value $BuildTypes
-    $obj
+    $ArchivedValueToAssign = $Archived
+	
+	if ( $Archived -ne "" ) 
+	{ 
+		[bool]$ArchivedValueToAssign = [System.Convert]::ToBoolean($Archived) 
+	}
+	
+	$NewProject = New-Object PSObject -Property @{
+	    Id = $Id
+	    Name = $Name
+	    Href = $Href
+	    WebUrl = $WebUrl
+	    Archived = $ArchivedValueToAssign
+	    Parameters = $Parameters
+	    BuildTypes = $BuildTypes
+	}
+	
+	return ,$NewProject
 }
 
 function New-BuildType()
@@ -39,24 +47,28 @@ function New-BuildType()
         [PSObject] $VcsRoots
     )
     
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty -Name Id -Value $Id
-    $obj | Add-Member NoteProperty -Name Name -Value $Name
-    $obj | Add-Member NoteProperty -Name Description -Value $Description
-    if ( $Id -and ( $Href -eq "" ) ) {
-        $Href = "/buildTypes/id:$Id"
-    }
-    $obj | Add-Member NoteProperty -Name Href -Value $Href
-    $obj | Add-Member NoteProperty -Name WebUrl -Value $WebUrl
-    if ( $Paused -ne "" ) { [bool]$Paused = [System.Convert]::ToBoolean($Paused) }
-    $obj | Add-Member NoteProperty -Name Paused -Value $Paused
-    $obj | Add-Member NoteProperty -Name Project -Value $Project
-    $obj | Add-Member NoteProperty -Name Settings -Value  $Settings
-    $obj | Add-Member NoteProperty -Name Parameters -Value $Parameters
-    $obj | Add-Member NoteProperty -Name ArtifactDependencies -Value $ArtifactDependencies
-    $obj | Add-Member NoteProperty -Name SnapshotDependencies -Value $SnapshotDependencies
-    $obj | Add-Member NoteProperty -Name VcsRoots -Value $VcsRoots
-    $obj   
+	$HrefToAssign = $Href
+	if( $Id -and ( $Href -eq "" ) )	{ $HrefToAssign = "/buildTypes/id:$Id" }
+	
+	$PausedToAssign = $Paused
+	if ( $Paused -ne "" ) { [bool]$pausedToAssign = [System.Convert]::ToBoolean($Paused) }
+	
+    $newBuildType = New-Object PSObject -Property @{
+    	Id = $Id
+    	Name = $Name
+    	Description = $Description
+    	Href = $HrefToAssign
+    	WebUrl = $WebUrl
+        Paused = $PausedToAssign
+    	Project = $Project
+    	Settings =  $Settings
+    	Parameters = $Parameters
+    	ArtifactDependencies = $ArtifactDependencies
+    	SnapshotDependencies = $SnapshotDependencies
+    	VcsRoots = $VcsRoots
+	}
+	
+    return ,$newBuildType    
 }
 
 function New-BuildStep() 
@@ -68,12 +80,13 @@ function New-BuildStep()
         [PSObject] $Properties
     )
 
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty -Name Id -Value $Id
-    $obj | Add-Member NoteProperty -Name Name -Value $Name
-    $obj | Add-Member NoteProperty -Name Type -Value $Type 
-    $obj | Add-Member NoteProperty -Name Properties -Value $Properties
-    $obj
+	$NewBuildStep = New-Object PSObject -Property @{
+   		Id = $Id
+    	Name = $Name
+    	Type = $Type 
+    	Properties = $Properties
+	}
+	return ,$NewBuildStep
 }
 
 function New-Build()
@@ -97,30 +110,39 @@ function New-Build()
         [PSObject] $SnapshotDependencies,
         [PSObject] $ArtifactDependencies
     )
-
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty -Name Id -Value $Id
-    $obj | Add-Member NoteProperty -Name Number -Value $Number
-    $obj | Add-Member NoteProperty -Name Status -Value $Status
-    $obj | Add-Member NoteProperty -Name StatusText -Value $StatusText
-    $obj | Add-Member NoteProperty -Name Href -Value $Href
-    $obj | Add-Member NoteProperty -Name WebUrl -Value $WebUrl
-    if ( $Personal -ne "" ) { [bool]$Personal = [System.Convert]::ToBoolean($Personal) }
-    $obj | Add-Member NoteProperty -Name Personal -Value $Personal
-    if ( $History -ne "" ) { [bool]$History = [System.Convert]::ToBoolean($History) }
-    $obj | Add-Member NoteProperty -Name History -Value $History
-    if ( $Pinned -ne "" ) { [bool]$Pinned = [System.Convert]::ToBoolean($Pinned) }
-    $obj | Add-Member NoteProperty -Name Pinned -Value $Pinned
-    $obj | Add-Member NoteProperty -Name StartDate -Value $StartDate
-    if ( $FinishDate -ne "" ) { [DateTimeOffset]$FinishDate = $FinishDate }
-    $obj | Add-Member NoteProperty -Name FinishDate -Value $FinishDate
-    $obj | Add-Member NoteProperty -Name BuildType -Value $BuildType
-    $obj | Add-Member NoteProperty -Name Agent -Value $Agent
-    $obj | Add-Member NoteProperty -Name Tags -Value $Tags
-    $obj | Add-Member NoteProperty -Name Properties -Value $Properties
-    $obj | Add-Member NoteProperty -Name SnapshotDependencies -Value $SnapshotDependencies
-    $obj | Add-Member NoteProperty -Name ArtifactDependencies -Value $ArtifactDependencies
-    $obj
+	$PersonalToAssign = $Personal
+	if ( $Personal -ne "" ) { [bool]$PersonalToAssign = [System.Convert]::ToBoolean($Personal) }
+	
+	$HistoryToAssign = $History
+	if ( $History -ne "" ) { [bool]$HistoryToAssign = [System.Convert]::ToBoolean($History) }
+	
+	$PinnedToAssign = $Pinned
+	if ( $Pinned -ne "" ) { [bool]$PinnedToAssign = [System.Convert]::ToBoolean($Pinned) }
+	
+	$FinishDateToAssign = $FinishDate
+	if ( $FinishDate -ne "" ) { [DateTimeOffset]$FinishDateToAssign = $FinishDate }
+	
+    $NewBuild = New-Object PSObject -Property @{
+		Id = $Id
+		Number = $Number
+		Status = $Status
+		StatusText = $StatusText
+		Href = $Href
+		WebUrl = $WebUrl
+		Personal = $Personal
+		History = $History
+		Pinned = $Pinned
+		StartDate = $StartDate
+		FinishDate = $FinishDate
+		BuildType = $BuildType
+		Agent = $Agent
+		Tags = $Tags
+		Properties = $Properties
+		SnapshotDependencies = $SnapshotDependencies
+		ArtifactDependencies = $ArtifactDependencies
+	}
+	
+    return ,$NewBuild
 }
 
 function New-Dependency() 
@@ -131,12 +153,15 @@ function New-Dependency()
         [PSObject] $Properties
     )
 
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty -Name Id -Value $Id
-    $obj | Add-Member NoteProperty -Name Type -Value $Type 
-    $obj | Add-Member NoteProperty -Name Properties -Value $Properties
-    $obj
+	$NewDependency = New-Object PSObject -Property @{
+	    Id = $Id
+	    Type = $Type 
+	    Properties = $Properties
+	}
+	
+	return ,$NewDependency
 }
+
 Set-Alias New-Feature New-Dependency
 Set-Alias New-Trigger New-Dependency
 
@@ -153,21 +178,31 @@ function New-Agent()
         [string] $UpToDate
     )
 
-    $obj = New-Object PSObject
-    $obj | Add-Member NoteProperty -Name Id -Value $Id
-    $obj | Add-Member NoteProperty -Name Name -Value $Name 
-    $obj | Add-Member NoteProperty -Name Href -Value $Href
-    $obj | Add-Member NoteProperty -Name Ip -Value $Ip
-    $obj | Add-Member NoteProperty -Name Properties -Value $Properties
-    if ( $Authorized -ne "" ) { [bool]$Authorized = [System.Convert]::ToBoolean($Authorized) }
-    $obj | Add-Member NoteProperty -Name Authorized -Value $Authorized
-    if ( $Connected -ne "" ) { [bool]$Connected = [System.Convert]::ToBoolean($Connected) }
-    $obj | Add-Member NoteProperty -Name Connected -Value $Connected
-    if ( $Enabled -ne "" ) { [bool]$Enabled = [System.Convert]::ToBoolean($Enabled) }
-    $obj | Add-Member NoteProperty -Name Enabled -Value $Enabled
-    if ( $UpToDate -ne "" ) { [bool]$UpToDate = [System.Convert]::ToBoolean($UpToDate) }
-    $obj | Add-Member NoteProperty -Name UpToDate -Value $UpToDate
-    $obj
+	$AuthorizedToAssign = $Authorized
+	if ( $Authorized -ne "" ) { [bool]$AuthorizedToAssign = [System.Convert]::ToBoolean($Authorized) }
+	
+	$ConnectedToAssign = $Connected
+	if ( $Connected -ne "" ) { [bool]$ConnectedToAssign = [System.Convert]::ToBoolean($Connected) }
+	
+	$EnabledToAssign = $Enabled
+	if ( $Enabled -ne "" ) { [bool]$EnabledToAssign = [System.Convert]::ToBoolean($Enabled) }
+	
+	$UpToDateToAssign = $UpToDate
+	if ( $UpToDate -ne "" ) { [bool]$UpToDateToAssign = [System.Convert]::ToBoolean($UpToDate) }
+	
+    $NewAgent = New-Object PSObject -Property @{
+		Id = $Id
+		Name = $Name
+		Href = $Href
+		Ip = $Ip
+		Properties = $Properties
+		Authorized = $AuthorizedToAssign
+		Connected = $ConnectedToAssign
+		Enabled = $EnabledToAssign
+		UpToDate = $UpToDateToAssign
+	}
+	
+    return ,$NewAgent
 }
 
 function New-PropertyGroup()
@@ -179,9 +214,10 @@ function New-PropertyGroup()
     $group = @()
     if ( $PropertyGroup ) {
         foreach ( $property in $PropertyGroup.ChildNodes ) {
-            $obj = New-Object PSObject
-            $obj | Add-Member NoteProperty -Name Name -Value $property.name
-            $obj | Add-Member NoteProperty -Name Value -Value $property.value
+            $obj = New-Object PSObject -Property @{
+            	Name = $property.name
+            	Value = $property.value
+			}
             $group = $group + $obj
         }
     }
