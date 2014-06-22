@@ -84,3 +84,33 @@ function Get-Build()
             -ArtifactDependencies $artifactDependencies -SnapshotDependencies $snapshotDependencies -Agent $agent -Tags $tags -StatusText $statusText
     }
 }
+
+function Get-BuildLog
+{
+	[CmdletBinding()]
+    param (
+        [string] $BuildId = $null,
+		[string] $Path = $pwd.Path
+    )
+	
+	if ( $BuildId ) {
+		$buildLogUrl = New-TeamcityBaseUrl "/downloadBuildLog.html?buildId=$BuildId"
+		Write-Verbose "Get-BuildLog URL: $buildLogUrl"
+		Invoke-TeamcityGetFileCommand -Url $buildLogUrl -Path $Path
+	}
+<#
+.Synopsis
+    Gets build's log file from Teamcity.
+
+.Description 
+    Gets build's log file from Teamcity.
+
+.Parameter Username
+    BuildId Id of the build
+	Path Path whare file should be written. If null "$pwd.Path" will be used
+    
+.Example
+    Get-BuildLog -BuildId 1 -Path "D:\logs"
+#>
+}
+
