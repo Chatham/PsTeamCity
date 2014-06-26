@@ -212,6 +212,56 @@ function Invoke-TeamcityDeleteCommand()
     $sr.ReadToEnd()
 }
 
+function Invoke-TeamcityGetFileCommand() 
+{
+    [CmdletBinding()]
+    param (
+        [string] $Url = $null,
+		[string] $Path = $pwd.Path 
+    )
+  
+    if ( $Url ) {
+        $client = New-Object Net.WebClient
+
+        if ( !$script:g_TeamcityGuestAuth ) {
+            $credentials = Get-TeamcityCredentials
+            $client.Credentials = $credentials
+        }
+		[string] $tempFileName = $Path+"\temp" + [guid]::NewGuid() + ".log"
+        $client.DownloadFile($Url, $tempFileName)
+		
+		$header = $client.ResponseHeaders["Content-Disposition"];
+		[int] $index = $header.LastIndexOf("filename=");
+		if ($index -gt -1)
+		{
+			$fileName = $header.Substring($index + 9);
+			$fileName = $fileName -Replace "["";]", ""
+		}
+		
+		if($fileName)
+		{
+			Write-Verbose ("tempFile=" + $tempFileName + "; newFileName=" + $fileName)
+			Rename-Item -path $tempFileName -NewName $fileName
+		}
+
+    }
+
+<#
+.Synopsis
+    Gets file from Teamcity.
+
+.Description 
+    Gets file (f.e. build log, artifact) from Teamcity.
+
+.Parameter Username
+    Url Url of the file
+	Path Path whare file should be written. If null "$pwd" will be used
+    
+.Example
+    Invoke-TeamcityGetFileCommand -Url "http://teamcity:8111/httpAuth/downloadBuildLog.html?buildId=1" -Path "D:\Logs"
+#>
+}
+
 ################################################
 
 function Get-TeamcityApiBaseUrl()
@@ -253,3 +303,32 @@ function Get-TeamcityCredentials()
     }
     $script:g_TeamcityCredentials
 }
+
+function Get-TeamcityBaseUrl()
+{
+	if ( $null -eq $script:g_TeamcityApiBase ) {
+        Set-TeamcityApiBaseUrl
+    }
+	
+	if ($script:g_TeamcityGuestAuth) {
+        "$script:g_TeamcityApiBase/guestAuth"
+    }
+    else {
+        "$script:g_TeamcityApiBase/httpAuth"
+    }
+}
+
+function New-TeamcityBaseUrl()
+{
+    [CmdletBinding()]
+    param (
+        [string]$UrlStub
+    )
+
+    $baseUrl = Get-TeamcityBaseUrl
+    $stub = $UrlStub -Replace "^\/(httpAuth|guestAuth)", ""
+    $baseUrl + $stub
+}
+
+
+

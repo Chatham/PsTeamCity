@@ -19,6 +19,7 @@ $script:g_TeamcityGuestAuth = $null
 #Api.ps1
 Export-ModuleMember Set-TeamcityApiBaseUrl
 Export-ModuleMember New-TeamcityApiUrl
+Export-ModuleMember New-TeamcityBaseUrl
 Export-ModuleMember Set-TeamcityCredentials
 Export-ModuleMember Reset-TeamcityCredentials
 Export-ModuleMember Set-TeamcityGuestAuth
@@ -27,6 +28,7 @@ Export-ModuleMember Invoke-TeamcityGetCommand
 Export-ModuleMember Invoke-TeamcityPostCommand
 Export-ModuleMember Invoke-TeamcityPutCommand
 Export-ModuleMember Invoke-TeamcityDeleteCommand
+Export-ModuleMember Invoke-TeamcityGetFileCommand
 
 #Project.ps1
 Export-ModuleMember Get-AllProjects
@@ -39,6 +41,7 @@ Export-ModuleMember Get-BuildType
 #Build.ps1
 Export-ModuleMember Get-AllBuilds
 Export-ModuleMember Get-Build
+Export-ModuleMember Get-BuildLog
 
 #CustomObjects.ps1
 Export-ModuleMember New-BuildType
